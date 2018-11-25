@@ -1,5 +1,5 @@
 {
-  "name": "go-ceries-app-api",
+  "name": "go-ceries-server",
   "version": "1.1.0",
   "description": "A Node.js starter for the Serverless Framework with async/await and unit test support",
   "main": "handler.js",
