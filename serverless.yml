@@ -34,8 +34,7 @@ provider:
   # under process.env.
   environment:
     tableName: ${self:custom.tableName}
-    accessKeyId: ${self:custom.environment.accessKeyId}
-    secretAccessKey: ${self:custom.environment.secretAccessKey}
+    
 
   iamRoleStatements:
     - Effect: Allow
