@@ -1,131 +1,117 @@
-# Serverless Node.js Starter
+# Go-Ceries Serverless Node.js
+The backend of the application is built using the servless framework connected to AWS
+This will deploy the following resources:
+* AWS Lambda with the require functions
+* AWS API Gateway to handle all API calls
+* AWS DynamoDB to store the data
+* AWS Cognito to manage user authentication
+* AWS S3 Bucket to store any necessary files
 
-A Serverless starter that adds ES7 syntax, serverless-offline, environment variables, and unit test support. Part of the [Serverless Stack](http://serverless-stack.com) guide.
-
-[Serverless Node.js Starter](https://github.com/AnomalyInnovations/serverless-nodejs-starter) uses the [serverless-webpack](https://github.com/serverless-heaven/serverless-webpack) plugin, [Babel](https://babeljs.io), [serverless-offline](https://github.com/dherault/serverless-offline), and [Jest](https://facebook.github.io/jest/). It supports:
-
-- **ES7 syntax in your handler functions**
-  - Use `import` and `export`
-- **Package your functions using Webpack**
-- **Run API Gateway locally**
-  - Use `serverless offline start`
-- **Support for unit tests**
-  - Run `npm test` to run your tests
-- **Sourcemaps for proper error messages**
-  - Error message show the correct line numbers
-  - Works in production with CloudWatch
-- **Automatic support for multiple handler files**
-  - No need to add a new entry to your `webpack.config.js`
-- **Add environment variables for your stages**
-
----
-
-### Demo
-
-A demo version of this service is hosted on AWS - [`https://z6pv80ao4l.execute-api.us-east-1.amazonaws.com/dev/hello`](https://z6pv80ao4l.execute-api.us-east-1.amazonaws.com/dev/hello)
-
-And here is the ES7 source behind it
-
-``` javascript
-export const hello = async (event, context, callback) => {
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: `Go Serverless v1.0! ${(await message({ time: 1, copy: 'Your function executed successfully!'}))}`,
-      input: event,
-    }),
-  };
-
-  callback(null, response);
-};
-
-const message = ({ time, ...rest }) => new Promise((resolve, reject) => 
-  setTimeout(() => {
-    resolve(`${rest.copy} (with a delay)`);
-  }, time * 1000)
-);
-```
 
 ### Requirements
 
 - [Install the Serverless Framework](https://serverless.com/framework/docs/providers/aws/guide/installation/)
 - [Configure your AWS CLI](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
+- [Install ECS-CLI](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_installation.html)
+- [Install Docker](https://docs.docker.com/install/)
+- [Install Docker-Compose](https://docs.docker.com/compose/install/)
+- [Install Node](https://nodejs.org/en/)
 
-### Installation
+### Installation for Setting up Go-Ceries Backend Application
 
-To create a new Serverless project.
-
-``` bash
-$ serverless install --url https://github.com/AnomalyInnovations/serverless-nodejs-starter --name my-project
-```
-
-Enter the new directory
+Clone go-ceries-server repository
 
 ``` bash
-$ cd my-project
+$ git clone https://github.com/HaifengMei/go-ceries-server
 ```
+Go to root of go-ceries-server repository 
 
+``` bash
+$ cd go-ceries-server
+```
 Install the Node.js packages
 
 ``` bash
 $ npm install
 ```
 
-### Usage
-
-To run unit tests on your local
-
+Configure your aws accessKeyId and accessKeyId. Set region as us-east-1 
 ``` bash
-$ npm test
+$ aws configure
 ```
 
-To run a function on your local
+Deploy the go-ceries-server
 
 ``` bash
-$ serverless invoke local --function hello
+$ serverless deploy -v
 ```
 
-To simulate API Gateway locally using [serverless-offline](https://github.com/dherault/serverless-offline)
+Take note of the output VALUES when the command finish ran:
+* AttachmentsBucketName
+* ServiceEndpoint
+* UserPoolId
+* UserPoolClientId
+* IdentityPoolId
+
+### Log on to AWS Console and go to CloudFormation to verify your stack deployed
+
+### Instructions for Setting up Go-Ceries Front-End Application
+
+Clone go-ceries-server repository
 
 ``` bash
-$ serverless offline start
+$ git clone https://github.com/HaifengMei/go-ceries-cloud
 ```
-
-Run your tests
+Go to root of go-ceries-server repository 
 
 ``` bash
-$ npm test
+$ cd go-ceries-cloud
 ```
 
-We use Jest to run our tests. You can read more about setting up your tests [here](https://facebook.github.io/jest/docs/en/getting-started.html#content).
+## Update aws-config.js file
+1. This is found in go-ceries-cloud/src/config/aws-config
 
-Deploy your project
+    Change the following KEY VALUES (Not the key):
 
-``` bash
-$ serverless deploy
-```
+    In 'const dev': 
+    
+    * Change the 'BUCKET' value to the 'AttachmentsBucketName' value obtained in the outputs.
+    * Change the 'URL' value to the 'ServiceEndpoint' value obtained in the outputs.
+    * Change the 'USER_POOL_ID' value to the 'UserPoolId' value obtained in the outputs.
+    * Change the 'APP_CLIENT_ID' value to the 'UserPoolClientId' value obtained in the outputs.
+    * Change the 'IDENTITY_POOL_ID' value to the 'IdentityPoolId' value obtained in the outputs.
+        
+    Repeat this process for the same values in 'const prod'.
+        
+2. Go onto your AWS Console and then go to EC2 Dashboard
+    Here create a KeyPair Value and save it in your root directory of the Go-Ceries application folder.
 
-Deploy a single function
+3. Go to the aws-compose.yml file in the root directory of the Go-Ceries application and make the following changes.
+    In web:
+        Change the 'image' value to '[Your Docker Hub Username]/go-ceries-cloud_app'
 
-``` bash
-$ serverless deploy function --function hello
-```
+4. Make similar changes to the 'commands.sh' file in the root directory of the Go-Creies Application
+    In line 1:
+    ``` bash
+    sudo docker build -t [Your Docker Hub Username]/go-ceries-cloud_app
+    ```
+    
+    In line 2
+    ``` bash
+    sudo docker push [Your Docker Hub Username]/go-ceries-cloud_app
+    ```
+    
+    In line 4
+    ``` bash
+    ecs-cli up --keypair [Your KeyPair File Name] --capability-iam --size 2 --instance-type t2.micro
+    ```
+        
+4. Afterwards either run the commands.sh file or copy and paste the commands into your command line and run them.
 
-To add another function as a new file to your project, simply add the new file and add the reference to `serverless.yml`. The `webpack.config.js` automatically handles functions in different files.
+5. Find the IP of your deployed Front-end Application
+    ``` bash
+    ecs-cli ps
+    ```
+    http://[Your IP Address] , (eg. http://54.157.255.187)
+    Enter it into a web browser of your choice.
 
-To add environment variables to your project
-
-1. Rename `env.example` to `env.yml`.
-2. Add environment variables for the various stages to `env.yml`.
-3. Uncomment `environment: ${file(env.yml):${self:provider.stage}}` in the `serverless.yml`.
-4. Make sure to not commit your `env.yml`.
-
-### Support
-
-- Send us an [email](mailto:contact@anoma.ly) if you have any questions
-- Open a [new issue](https://github.com/AnomalyInnovations/serverless-nodejs-starter/issues/new) if you've found a bug or have some suggestions.
-- Or submit a pull request!
-
-### Maintainers
-
-Serverless Node.js Starter is maintained by Frank Wang ([@fanjiewang](https://twitter.com/fanjiewang)) & Jay V ([@jayair](https://twitter.com/jayair)). [**Subscribe to our newsletter**](http://eepurl.com/cEaBlf) for updates. Send us an [email](mailto:contact@anoma.ly) if you have any questions.
