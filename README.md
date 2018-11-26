@@ -1,11 +1,22 @@
-# Go-Ceries Serverless Node.js
+# Go-Ceries Serverless React Application
+A Prototype E-Commerce Provision Service 
+
+## This application is separated into two projects
+
+### Backend Serverless Application
 The backend of the application is built using the servless framework connected to AWS
 This will deploy the following resources:
-* AWS Lambda with the require functions
+* AWS Lambda with the require functions (on Node Environment)
 * AWS API Gateway to handle all API calls
 * AWS DynamoDB to store the data
 * AWS Cognito to manage user authentication
 * AWS S3 Bucket to store any necessary files
+
+### Frontend React Application
+A single page application built using:
+* React
+* Material UI
+* Mobx
 
 
 ### Requirements
