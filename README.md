@@ -125,6 +125,17 @@ $ cd go-ceries-cloud
         
 4. Afterwards either run the commands.sh file or copy and paste the commands into your command line and run them.
 
+   If Bash fails and throws the "No Container Instances Found in your cluster" Error. Please run the last two lines in your script      manually
+   ``` bash
+   ecs-cli compose --file aws-compose.yml up
+   ```
+   
+   ``` bash
+   ecs-cli ps
+   ```
+   
+   We are unsure why this happens, maybe the containers were not created as yet even though the cluster were created.
+
 5. Find the IP of your deployed Front-end Application
     ``` bash
     ecs-cli ps
