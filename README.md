@@ -53,7 +53,10 @@ Take note of the output VALUES when the command finish ran:
 * UserPoolClientId
 * IdentityPoolId
 
+![Servless Output](https://github.com/HaifengMei/go-ceries-server/blob/master/Screenshots/Serverless%20Deploy%20Outputspng.png?raw=true)
+
 ### Log on to AWS Console and go to CloudFormation to verify your stack deployed
+![CloudFormation Serverless Stack](https://github.com/HaifengMei/go-ceries-server/blob/master/Screenshots/Deploy%20Serverless%20stack.PNG?raw=true)
 
 ### Instructions for Setting up Go-Ceries Front-End Application
 
@@ -105,6 +108,9 @@ $ cd go-ceries-cloud
     ``` bash
     ecs-cli up --keypair [Your KeyPair File Name] --capability-iam --size 2 --instance-type t2.micro
     ```
+    
+    Confirm the created attack in your AWS CloudFormation Dashboard
+    ![CloudFormation Serverless Stack](https://github.com/HaifengMei/go-ceries-server/blob/master/Screenshots/Frontend%20App%20Stack.PNG?raw=true)
         
 4. Afterwards either run the commands.sh file or copy and paste the commands into your command line and run them.
 
@@ -114,4 +120,5 @@ $ cd go-ceries-cloud
     ```
     http://[Your IP Address] , (eg. http://54.157.255.187)
     Enter it into a web browser of your choice.
+    
 
